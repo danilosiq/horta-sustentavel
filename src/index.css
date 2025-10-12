@@ -6,6 +6,11 @@
 All colors MUST be HSL.
 */
 
+@theme{
+  --color-primario:#49DE80
+  --color-secondary:#247C45
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

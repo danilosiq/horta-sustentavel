@@ -1,17 +1,17 @@
+import { Button } from "@/components/ui/button";
+import {
+  Calendar,
+  Home,
+  Leaf,
+  MapPin,
+  Menu,
+  Sprout,
+  Users,
+  Utensils,
+  X
+} from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { 
-  Leaf, 
-  Menu, 
-  X, 
-  Home, 
-  MapPin, 
-  BookOpen, 
-  Plus, 
-  LayoutDashboard,
-  Users 
-} from "lucide-react";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,10 +19,13 @@ const Navigation = () => {
 
   const navItems = [
     { path: "/", label: "Início", icon: Home },
-    { path: "/dashboard", label: "Painel", icon: LayoutDashboard },
+    // { path: "/dashboard", label: "Painel", icon: LayoutDashboard },
     { path: "/map", label: "Mapa das Hortas", icon: MapPin },
-    { path: "/recipes", label: "Receitas", icon: BookOpen },
+    // { path: "/recipes", label: "Receitas", icon: BookOpen },
     { path: "/producer", label: "Área do Produtor", icon: Users },
+    { path: "/make-recipe", label: "Receitas", icon: Utensils },
+    { path: "/green-calendar", label: "Calendario verde", icon: Calendar },
+    { path: "", label: "Guia do cultivo", icon: Sprout },
   ];
 
   const isActive = (path: string) => location.pathname === path;

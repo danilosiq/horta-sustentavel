@@ -1,18 +1,26 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
-import { 
-  Leaf, 
-  Target, 
-  Users, 
-  MapPin, 
-  BookOpen, 
-  Plus,
-  Heart,
-  Sprout,
-  Globe
-} from "lucide-react";
 import heroImage from "@/assets/hero-community-garden.jpg";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  BookOpen,
+  Calendar,
+  Globe,
+  Heart,
+  Leaf,
+  MapPin,
+  Plus,
+  Sprout,
+  Target,
+  Users,
+  Utensils,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const features = [
@@ -20,79 +28,100 @@ const Home = () => {
       icon: Plus,
       title: "Cadastrar Hortaliças",
       description: "Registre seus produtos e compartilhe com a comunidade",
-      link: "/dashboard"
+      link: "/dashboard",
     },
     {
       icon: BookOpen,
       title: "Receber Receitas",
       description: "IA sugere receitas baseadas nas suas hortaliças",
-      link: "/recipes"
+      link: "/recipes",
     },
     {
       icon: MapPin,
       title: "Ver Mapa das Hortas",
       description: "Encontre hortas comunitárias próximas a você",
-      link: "/map"
-    }
+      link: "/map",
+    },
   ];
 
   const impacts = [
     {
       icon: Target,
       title: "ODS 2 - Fome Zero",
-      description: "Contribuindo para acabar com a fome e promover agricultura sustentável"
+      description:
+        "Contribuindo para acabar com a fome e promover agricultura sustentável",
     },
     {
       icon: Users,
       title: "Comunidade Ativa",
-      description: "Conectando produtores e consumidores locais"
+      description: "Conectando produtores e consumidores locais",
     },
     {
       icon: Heart,
       title: "Impacto Social",
-      description: "Fortalecendo a segurança alimentar nas comunidades"
-    }
+      description: "Fortalecendo a segurança alimentar nas comunidades",
+    },
+  ];
+
+  const initialActions = [
+    {
+      label: "Aprenda a cultivar",
+      value: "make-recipe",
+      icon: Sprout,
+    },
+    {
+      label: "Gere sua receita",
+      value: "make-recipe",
+      icon: Utensils,
+    },
+    {
+      label: "Descubra as tendências de cultivo",
+      value: "make-recipe",
+      icon: Calendar,
+    },
+    {
+      label: "Veja hortas perto de você",
+      value: "make-recipe",
+      icon: MapPin,
+    },
   ];
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40" />
         </div>
-        
+
         <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-center mb-6">
             <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center shadow-elegant">
               <Leaf className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Horta Comunitária
           </h1>
-          
+
           <p className="text-xl md:text-2xl mb-8 text-gray-200">
             Conectando comunidades através da agricultura sustentável
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="text-lg px-8">
-              <Link to="/dashboard">
-                <Plus className="w-5 h-5 mr-2" />
-                Começar Agora
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 bg-white/10 border-white/30 text-white hover:bg-white/20">
-              <Link to="/map">
-                <MapPin className="w-5 h-5 mr-2" />
-                Ver Mapa
-              </Link>
-            </Button>
+
+          <div className="grid grid-cols-2 gap-4 ">
+            {initialActions.map((action, i) => {
+              const Icon = action.icon;
+              return (
+                <div className="flex flex-col hover:text-green-300 cursor-pointer hover:bg-primary/10 hover:border-secondary ease-in-out transition-all justify-center items-center border border-white bg-white/10 p-2 rounded-lg">
+                  <Icon />
+                  <p>{action.label}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -109,8 +138,9 @@ const Home = () => {
               Nossa Missão
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Promover a segurança alimentar e agricultura sustentável através de hortas comunitárias,
-              conectando produtores locais e fortalecendo comunidades.
+              Promover a segurança alimentar e agricultura sustentável através
+              de hortas comunitárias, conectando produtores locais e
+              fortalecendo comunidades.
             </p>
           </div>
 
@@ -118,7 +148,10 @@ const Home = () => {
             {impacts.map((impact, index) => {
               const Icon = impact.icon;
               return (
-                <Card key={index} className="text-center border-none shadow-soft">
+                <Card
+                  key={index}
+                  className="text-center border-none shadow-soft"
+                >
                   <CardHeader>
                     <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
                       <Icon className="w-6 h-6 text-primary-foreground" />
@@ -143,13 +176,16 @@ const Home = () => {
           <div className="text-center mb-16">
             <div className="flex items-center justify-center mb-4">
               <Sprout className="w-8 h-8 text-primary mr-2" />
-              <span className="text-primary font-semibold">Funcionalidades</span>
+              <span className="text-primary font-semibold">
+                Funcionalidades
+              </span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Como Funciona
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Ferramenta completa para gerenciar sua horta e conectar-se com a comunidade
+              Ferramenta completa para gerenciar sua horta e conectar-se com a
+              comunidade
             </p>
           </div>
 
@@ -157,7 +193,10 @@ const Home = () => {
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <Card key={index} className="group hover:shadow-elegant transition-all duration-300 cursor-pointer border-none">
+                <Card
+                  key={index}
+                  className="group hover:shadow-elegant transition-all duration-300 cursor-pointer border-none"
+                >
                   <Link to={feature.link}>
                     <CardHeader className="text-center">
                       <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
@@ -187,16 +226,27 @@ const Home = () => {
             Junte-se à Nossa Comunidade
           </h2>
           <p className="text-xl text-gray-200 mb-8">
-            Faça parte do movimento de agricultura sustentável e ajude a construir um futuro mais verde
+            Faça parte do movimento de agricultura sustentável e ajude a
+            construir um futuro mais verde
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary" className="text-lg px-8">
+            <Button
+              asChild
+              size="lg"
+              variant="secondary"
+              className="text-lg px-8"
+            >
               <Link to="/login">
                 <Users className="w-5 h-5 mr-2" />
                 Cadastrar-se
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="text-lg px-8 bg-white/10 border-white/30 text-white hover:bg-white/20">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 bg-white/10 border-white/30 text-white hover:bg-white/20"
+            >
               <Link to="/producer">
                 <Leaf className="w-5 h-5 mr-2" />
                 Sou Produtor

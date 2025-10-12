@@ -1,40 +1,64 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Navigation from "./components/Navigation";
+import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import { MakeRecipe } from "./pages/MakeRecipe";
 import Map from "./pages/Map";
-import Recipes from "./pages/Recipes";
-import Producer from "./pages/Producer";
 import NotFound from "./pages/NotFound";
+import Producer from "./pages/Producer";
+import Recipes from "./pages/Recipes";
 
-const queryClient = new QueryClient();
+import { useEffect } from "react";
+import { GuideIntro } from "./pages/GuideIntro";
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="min-h-screen bg-background">
-          <Navigation />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/map" element={<Map />} />
-            <Route path="/recipes" element={<Recipes />} />
-            <Route path="/producer" element={<Producer />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const AppContent = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.includes("make-recipe")) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [location.pathname]);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/map" element={<Map />} />
+        <Route path="/recipes" element={<Recipes />} />
+        <Route path="/producer" element={<Producer />} />
+        <Route path="*" element={<NotFound />} />
+        <Route path="/make-recipe" element={<MakeRecipe />} />
+        <Route path="/green-calendar" element={<GuideIntro />} />
+      </Routes>
+    </div>
+  );
+};
+
+const App = () => {
+  const queryClient = new QueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
