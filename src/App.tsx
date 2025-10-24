@@ -14,7 +14,10 @@ import Producer from "./pages/Producer";
 import Recipes from "./pages/Recipes";
 
 import { useEffect } from "react";
+import { GreenCalendarIntro } from "./pages/GreenCalendarIntro";
+import { GreenCalendarPrompt } from "./pages/GreenCalendarPrompt";
 import { GuideIntro } from "./pages/GuideIntro";
+import { GuidePrompt } from "./pages/GuidePrompt";
 
 const AppContent = () => {
   const location = useLocation();
@@ -39,7 +42,10 @@ const AppContent = () => {
         <Route path="/producer" element={<Producer />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/make-recipe" element={<MakeRecipe />} />
-        <Route path="/green-calendar" element={<GuideIntro />} />
+        <Route path="/guide" element={<GuideIntro />} />
+        <Route path="/guide-prompt" element={<GuidePrompt />} />
+        <Route path="/green-calendar-intro" element={<GreenCalendarIntro />} />
+        <Route path="/green-calendar-prompt" element={<GreenCalendarPrompt />} />
       </Routes>
     </div>
   );

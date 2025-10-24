@@ -1,5 +1,6 @@
 import Image from "@/assets/plantio.png";
 import { Sprout } from "lucide-react";
+import { Link } from "react-router-dom";
 export function GuideIntro() {
   return (
     <div className="flex-1 px-10 sm:justify-between pb-[90px] flex sm:flex-row">
@@ -91,7 +92,10 @@ export function GuideIntro() {
             src={Image}
             className="  w-[400px] h-[400px] rounded-full object-cover "
           />
+          <Link to="/guide-prompt">
           <div className="w-full py-3 text-xl font-semibold cursor-pointer text-secondary bg-[#49DE80]  text-center rounded-md">Começar agora!</div>
+        </Link>
+        
         </div>
       </div>
     </div>

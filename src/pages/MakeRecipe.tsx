@@ -1,8 +1,13 @@
 import { aditionalsList } from "@/mock/aditionalsList";
 import { foodListMock } from "@/mock/foodList";
 import { foodRestriction } from "@/mock/foodRestriction";
-import { Download } from "lucide-react";
-import { useState } from "react";
+import { PostGerarReceita } from "@/service/PostGerarReceita";
+import { useMutation } from "@tanstack/react-query";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { Download, RefreshCw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
 interface RecipeRequest {
   foods: string[];
   restrictions: string[];
@@ -17,11 +22,18 @@ export function MakeRecipe() {
   const [restrictions, setRestrictions] = useState<string[]>([]);
   const [aditionals, setAditionals] = useState<string[]>([]);
   const [finalPrompTags, setFinalPrompTags] = useState<RecipeRequest>();
+
+  const recipeRef = useRef<HTMLDivElement>(null); // ref para gerar PDF
+
+  const { mutate, isPending, data } = useMutation({
+    mutationFn: PostGerarReceita,
+  });
+
   function handleSelectFoods(food: string) {
     if (!selectedFoods.includes(food)) {
       setSelectedFoods([...selectedFoods, food]);
     } else {
-      setSelectedFoods((prev) => prev.filter((data) => data != food));
+      setSelectedFoods((prev) => prev.filter((item) => item !== food));
     }
   }
 
@@ -29,7 +41,7 @@ export function MakeRecipe() {
     if (!restrictions.includes(restriction)) {
       setRestrictions([...restrictions, restriction]);
     } else {
-      setRestrictions((prev) => prev.filter((data) => data != restriction));
+      setRestrictions((prev) => prev.filter((item) => item !== restriction));
     }
   }
 
@@ -37,31 +49,68 @@ export function MakeRecipe() {
     if (!aditionals.includes(aditional)) {
       setAditionals([...aditionals, aditional]);
     } else {
-      setAditionals((prev) => prev.filter((data) => data != aditional));
+      setAditionals((prev) => prev.filter((item) => item !== aditional));
     }
   }
 
+  useEffect(() => {
+    if (data) console.log("Receita gerada:", data);
+  }, [data]);
+
   function handleGenerateRecipe() {
+    mutate({
+      Alimentos: selectedFoods.join(", "),
+      Restrições: restrictions.join(", "),
+      Adicionais: aditionals.join(", "),
+    });
     setFinalPrompTags({
       foods: selectedFoods,
       aditionals: aditionals,
       restrictions: restrictions,
     });
   }
+
+  // 🧾 Função para gerar PDF da receita
+  async function handleDownloadPDF() {
+    if (!recipeRef.current) return;
+
+    const canvas = await html2canvas(recipeRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgHeight = (canvas.height * pageWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
+    heightLeft -= pdf.internal.pageSize.getHeight();
+
+    // Caso a receita seja longa, adiciona novas páginas
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
+      heightLeft -= pdf.internal.pageSize.getHeight();
+    }
+
+    pdf.save(`${data?.NomeDaReceita || "receita"}.pdf`);
+  }
+
   return (
-    <div className="flex-1  h-screen flex md:flex-row    flex-col">
+    <div className="flex-1 h-screen flex md:flex-row flex-col">
+      {/* SEÇÃO ESQUERDA */}
       <div className="md:w-[46%] relative p-7">
-        <p className="text-xl shadow-slate-9 font-semibold">
-          Monte sua receita
-        </p>
+        <p className="text-xl shadow-slate-9 font-semibold">Monte sua receita</p>
 
         <div className="sticky top-10 shadow-2xl h-[80vh] gap-5 flex flex-col p-4 rounded-lg bg-white">
           {/* Tabs */}
-          <div className="flex flex-row  gap-3 justify-center">
+          <div className="flex flex-row gap-3 justify-center">
             {tabs.map((tab, i) => (
               <div
-                onClick={() => setCurrentTab(tab)}
                 key={i}
+                onClick={() => setCurrentTab(tab)}
                 className={`p-2 cursor-pointer font-semibold rounded-md border ${
                   tab === currentTab
                     ? "bg-[#49DE80] text-[#247C45] border-[#49DE80]"
@@ -73,6 +122,7 @@ export function MakeRecipe() {
             ))}
           </div>
 
+          {/* === ALIMENTOS === */}
           {currentTab === "Alimentos" && (
             <>
               <div>
@@ -83,22 +133,22 @@ export function MakeRecipe() {
                   className="w-full h-[40px] border border-slate-400 focus:outline-[#49DE80] px-3 rounded-3xl focus:border-[#49DE80]"
                 />
               </div>
-              <div className="border flex-1 p-2  w-full overflow-y-scroll">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 ">
+              <div className="border flex-1 p-2 w-full overflow-y-scroll">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {foodListMock
                     .filter((data) =>
                       data
                         .toLowerCase()
-                        .normalize("NFD") // separa letras e acentos
-                        .replace(/[\u0300-\u036f]/g, "") // remove os acentos
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
                         .includes(searchCriteria.toLocaleLowerCase())
                     )
                     .map((food, i) => {
                       const isSelected = selectedFoods.includes(food);
                       return (
                         <div
-                          onClick={() => handleSelectFoods(food)}
                           key={i}
+                          onClick={() => handleSelectFoods(food)}
                           className={`${
                             isSelected
                               ? "bg-[#49DE80]/50 text-[#247C45] border-[#247C45]"
@@ -115,8 +165,8 @@ export function MakeRecipe() {
               <div className="py-2 gap-2 w-full flex flex-row overflow-x-auto">
                 {selectedFoods.map((food, i) => (
                   <p
-                    onClick={() => handleSelectFoods(food)}
                     key={i}
+                    onClick={() => handleSelectFoods(food)}
                     className="flex-shrink-0 px-4 py-2 cursor-pointer flex items-center justify-center text-center rounded-md bg-[#49DE80]/50 text-[#247C45] border-[#247C45]"
                   >
                     {food}
@@ -126,9 +176,10 @@ export function MakeRecipe() {
             </>
           )}
 
+          {/* === RESTRIÇÕES === */}
           {currentTab === "Restrições" && (
             <>
-              <div className="flex-1 ">
+              <div className="flex-1">
                 <div className="flex items-center justify-center mt-10 flex-row gap-3">
                   {foodRestriction.map((restriction, i) => {
                     const Icon = restriction.icon;
@@ -143,20 +194,21 @@ export function MakeRecipe() {
                           isSelected
                             ? "bg-[#49DE80]/50 text-[#247C45] border-[#247C45]"
                             : "text-slate-500"
-                        } text-sm justify-center items-center  flex flex-col cursor-pointer text-center border rounded-lg p-3`}
+                        } text-sm justify-center items-center flex flex-col cursor-pointer text-center border rounded-lg p-3`}
                       >
-                        <Icon className="" />
+                        <Icon />
                         <p>{restriction.label}</p>
                       </div>
                     );
                   })}
                 </div>
               </div>
+
               <div className="py-2 gap-2 w-full flex flex-row overflow-x-auto">
                 {restrictions.map((restriction, i) => (
                   <p
-                    onClick={() => handleSelectRestrictions(restriction)}
                     key={i}
+                    onClick={() => handleSelectRestrictions(restriction)}
                     className="flex-shrink-0 px-4 py-2 cursor-pointer flex items-center justify-center text-center rounded-md bg-[#49DE80]/50 text-[#247C45] border-[#247C45]"
                   >
                     {restriction}
@@ -166,10 +218,11 @@ export function MakeRecipe() {
             </>
           )}
 
+          {/* === ADICIONAIS === */}
           {currentTab === "Adicionais" && (
             <>
-              <div className="flex-1 ">
-                <div className="grid grid-cols-2 items-center justify-center mt-10  gap-3">
+              <div className="flex-1">
+                <div className="grid grid-cols-2 items-center justify-center mt-10 gap-3">
                   {aditionalsList.map((aditional, i) => {
                     const Icon = aditional.icon;
                     const isSelected = aditionals.includes(aditional.label);
@@ -181,9 +234,9 @@ export function MakeRecipe() {
                           isSelected
                             ? "bg-[#49DE80]/50 text-[#247C45] border-[#247C45]"
                             : "text-slate-500"
-                        } text-sm justify-center items-center  flex flex-col cursor-pointer text-center border rounded-lg p-3`}
+                        } text-sm justify-center items-center flex flex-col cursor-pointer text-center border rounded-lg p-3`}
                       >
-                        <Icon className="" />
+                        <Icon />
                         <p>{aditional.label}</p>
                       </div>
                     );
@@ -191,37 +244,97 @@ export function MakeRecipe() {
                 </div>
               </div>
               <div className="py-2 gap-2 w-full flex flex-row overflow-x-auto">
-                {aditionals.map((restriction, i) => (
+                {aditionals.map((item, i) => (
                   <p
-                    onClick={() => handleSelectRestrictions(restriction)}
                     key={i}
+                    onClick={() => handleSelectAditionals(item)}
                     className="flex-shrink-0 px-4 py-2 cursor-pointer flex items-center justify-center text-center rounded-md bg-[#49DE80]/50 text-[#247C45] border-[#247C45]"
                   >
-                    {restriction}
+                    {item}
                   </p>
                 ))}
               </div>
             </>
           )}
 
-          {/* Botão */}
+          {/* Botão Gerar */}
           <div
-            onClick={() => handleGenerateRecipe()}
-            className="bg-[#49DE80] text-xl w-[80%] mx-auto text-center py-3 p-2 cursor-pointer rounded-md border font-semibold text-[#247C45] border-[#49DE80]"
+            onClick={() => !isPending && handleGenerateRecipe()}
+            className={`${
+              isPending
+                ? "bg-slate-200 text-slate-400"
+                : "bg-[#49DE80] cursor-pointer text-[#247C45] border-[#49DE80]"
+            } text-xl w-[80%] mx-auto text-center py-3 p-2 rounded-md border font-semibold`}
           >
-            Gerar
+            {isPending ? "Gerando..." : "Gerar"}
           </div>
         </div>
       </div>
 
-      <div className="flex-1 pb-[400px] p-10 bg-[#49DE80]/30 overflow-y-auto">
-        <div className="bg-white  rounded-tr-xl rounded-b-xl p-8 ">
-          <div className=" w-[200px] cursor-pointer ml-auto  p-2 text-white flex gap-2 rounded-md bg-primary">
+      {/* SEÇÃO DIREITA (RECEITA GERADA) */}
+      <div className="flex-1 pb-[400px] p-3 bg-[#49DE80]/30 overflow-y-auto">
+      <div
+            onClick={handleDownloadPDF}
+            className="no-print w-[200px] mb-3 cursor-pointer ml-auto p-2 text-white flex gap-2 items-center justify-center rounded-md bg-[#247C45]"
+          >
             <Download width={20} height={20} />
             Salvar como PDF
           </div>
-          {JSON.stringify(finalPrompTags)}
-         
+        <div ref={recipeRef} className="bg-white rounded-tr-xl rounded-b-xl p-8">
+          
+
+          {data ? (
+            <>
+              <h2 className="text-2xl font-bold mt-5 mb-3">
+                {data.NomeDaReceita}
+              </h2>
+              <p className="mb-5">{data.Descricao}</p>
+
+              <h3 className="text-xl font-semibold mb-2">Ingredientes</h3>
+              <ul className="list-disc ml-5 mb-5">
+                {data.Ingredientes.map((item: string, i: number) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+
+              <h3 className="text-xl font-semibold mb-2">Instruções</h3>
+              <ol className="list-decimal ml-5 mb-5">
+                {data.Instrucoes.map((step: string, i: number) => (
+                  <li key={i}>{step}</li>
+                ))}
+              </ol>
+
+              <p className="mb-2">
+                <strong>Tempo de Preparo:</strong> {data.TempoDePreparo}
+              </p>
+              <p className="mb-5">
+                <strong>Porções:</strong> {data.Porcoes}
+              </p>
+
+              <h3 className="text-xl font-semibold mb-2">Tabela Nutricional</h3>
+              <ul className="list-disc ml-5">
+                <li>
+                  <strong>Calorias:</strong> {data.TabelaNutricional.Calorias}
+                </li>
+                <li>
+                  <strong>Carboidratos:</strong>{" "}
+                  {data.TabelaNutricional.Carboidratos}
+                </li>
+                <li>
+                  <strong>Proteínas:</strong> {data.TabelaNutricional.Proteinas}
+                </li>
+                <li>
+                  <strong>Gorduras:</strong> {data.TabelaNutricional.Gorduras}
+                </li>
+              </ul>
+            </>
+          ) : (
+            isPending && (
+              <div className="flex items-center justify-center h-full">
+                <RefreshCw className="animate-spin text-[#247C45]" size={30} />
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>

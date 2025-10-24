@@ -24,8 +24,8 @@ const Navigation = () => {
     // { path: "/recipes", label: "Receitas", icon: BookOpen },
     { path: "/producer", label: "Área do Produtor", icon: Users },
     { path: "/make-recipe", label: "Receitas", icon: Utensils },
-    { path: "/green-calendar", label: "Calendario verde", icon: Calendar },
-    { path: "", label: "Guia do cultivo", icon: Sprout },
+    { path: "/green-calendar-intro", label: "Calendario verde", icon: Calendar },
+    { path: "/guide", label: "Guia do cultivo", icon: Sprout },
   ];
 
   const isActive = (path: string) => location.pathname === path;
