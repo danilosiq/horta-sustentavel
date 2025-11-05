@@ -9,6 +9,8 @@ export interface CardHortaPropr {
 
 export function Cardhorta({ data, JustView = false }: CardHortaPropr) {
   const { logout } = useAuth();
+  console.log(data);
+  
 
   return (
     <div className="rounded-md p-4 gap-3 flex flex-col shadow-xl mx-auto w-full md:w-[60%]">

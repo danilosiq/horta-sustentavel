@@ -90,7 +90,7 @@ const Login = () => {
 
   useEffect(() => {
     if (userId) {
-      navigate("/");
+      navigate("/producer");
     }
   }, []);
 

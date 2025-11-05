@@ -196,9 +196,9 @@ const Home = () => {
               return (
                 <Card
                   key={index}
-                  className="group hover:shadow-elegant transition-all duration-300 cursor-pointer border-none"
+                  className="group hover:shadow-elegant transition-all duration-300  border-none"
                 >
-                  <Link to={feature.link}>
+                
                     <CardHeader className="text-center">
                       <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                         <Icon className="w-8 h-8 text-primary-foreground" />
@@ -212,7 +212,7 @@ const Home = () => {
                         {feature.description}
                       </CardDescription>
                     </CardContent>
-                  </Link>
+                 
                 </Card>
               );
             })}
@@ -248,7 +248,7 @@ const Home = () => {
               variant="outline"
               className="text-lg px-8 bg-white/10 border-white/30 text-white hover:bg-white/20"
             >
-              <Link to="/producer">
+              <Link to="/login">
                 <Leaf className="w-5 h-5 mr-2" />
                 Sou Produtor
               </Link>
