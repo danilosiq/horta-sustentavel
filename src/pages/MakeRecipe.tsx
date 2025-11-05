@@ -99,7 +99,7 @@ export function MakeRecipe() {
   }
 
   return (
-    <div className="flex-1 h-screen flex md:flex-row flex-col">
+    <div className="flex-1  flex md:flex-row flex-col">
       {/* SEÇÃO ESQUERDA */}
       <div className="md:w-[46%] relative p-7">
         <p className="text-xl shadow-slate-9 font-semibold">Monte sua receita</p>
