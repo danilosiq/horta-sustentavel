@@ -13,7 +13,6 @@ import NotFound from "./pages/NotFound";
 import Producer from "./pages/Producer";
 import Recipes from "./pages/Recipes";
 
-import { useEffect } from "react";
 import { ProtectedBaseRoute } from "./components/Protected-route";
 import { GreenCalendarIntro } from "./pages/GreenCalendarIntro";
 import { GreenCalendarPrompt } from "./pages/GreenCalendarPrompt";
@@ -26,13 +25,13 @@ import { AuthProvider } from "./providers/auth-provider";
 const AppContent = () => {
   const location = useLocation();
 
-  useEffect(() => {
-    if (location.pathname.includes("make-recipe")) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [location.pathname]);
+  // useEffect(() => {
+  //   if (location.pathname.includes("make-recipe")) {
+  //     document.body.style.overflow = "hidden";
+  //   } else {
+  //     document.body.style.overflow = "auto";
+  //   }
+  // }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-background">
