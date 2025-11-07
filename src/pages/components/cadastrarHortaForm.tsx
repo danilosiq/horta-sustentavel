@@ -197,6 +197,7 @@ export function CadastrarHortaForm() {
             type="text"
             {...register("estado")}
             placeholder="Ex: SP"
+            maxLength={2}
             className="border rounded-md p-2 w-full focus:outline-green-600"
           />
           {errors.estado && (

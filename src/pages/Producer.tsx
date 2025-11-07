@@ -175,8 +175,8 @@ const Producer = () => {
           <Sprout />
           <p className="font-bold">Controle de colheita</p>
         </div>
-        {DataGetEstoque?.horta?.produtos &&
-          DataGetEstoque.horta.produtos.length > 0 && (
+        {data?.horta &&
+           (
             <Dialog>
               <DialogTrigger className="w-full flex justify-center">
                 <div className="">
