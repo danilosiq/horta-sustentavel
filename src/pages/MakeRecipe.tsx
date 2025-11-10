@@ -4,8 +4,7 @@ import { foodListMock } from "@/mock/foodList";
 import { foodRestriction } from "@/mock/foodRestriction";
 import { PostGerarReceita } from "@/service/PostGerarReceita";
 import { useMutation } from "@tanstack/react-query";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import html2pdf from "html2pdf.js";
 import { Download, RefreshCw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -22,37 +21,36 @@ export function MakeRecipe() {
   const [searchCriteria, setSearchCriteria] = useState<string>("");
   const [restrictions, setRestrictions] = useState<string[]>([]);
   const [aditionals, setAditionals] = useState<string[]>([]);
-  const [finalPrompTags, setFinalPrompTags] = useState<RecipeRequest>();
   const { userId } = useAuth();
 
-  const recipeRef = useRef<HTMLDivElement>(null); // ref para gerar PDF
+  const recipeRef = useRef<HTMLDivElement>(null);
 
   const { mutate, isPending, data } = useMutation({
     mutationFn: PostGerarReceita,
   });
 
   function handleSelectFoods(food: string) {
-    if (!selectedFoods.includes(food)) {
-      setSelectedFoods([...selectedFoods, food]);
-    } else {
-      setSelectedFoods((prev) => prev.filter((item) => item !== food));
-    }
+    setSelectedFoods((prev) =>
+      prev.includes(food)
+        ? prev.filter((item) => item !== food)
+        : [...prev, food]
+    );
   }
 
   function handleSelectRestrictions(restriction: string) {
-    if (!restrictions.includes(restriction)) {
-      setRestrictions([...restrictions, restriction]);
-    } else {
-      setRestrictions((prev) => prev.filter((item) => item !== restriction));
-    }
+    setRestrictions((prev) =>
+      prev.includes(restriction)
+        ? prev.filter((item) => item !== restriction)
+        : [...prev, restriction]
+    );
   }
 
   function handleSelectAditionals(aditional: string) {
-    if (!aditionals.includes(aditional)) {
-      setAditionals([...aditionals, aditional]);
-    } else {
-      setAditionals((prev) => prev.filter((item) => item !== aditional));
-    }
+    setAditionals((prev) =>
+      prev.includes(aditional)
+        ? prev.filter((item) => item !== aditional)
+        : [...prev, aditional]
+    );
   }
 
   useEffect(() => {
@@ -66,43 +64,25 @@ export function MakeRecipe() {
       Adicionais: aditionals.join(", "),
       id_produtor: userId ? userId.toString() : "",
     });
-    setFinalPrompTags({
-      foods: selectedFoods,
-      aditionals: aditionals,
-      restrictions: restrictions,
-    });
   }
 
-  // 🧾 Função para gerar PDF da receita
+  // 🧾 Função nova — usa html2pdf.js
   async function handleDownloadPDF() {
     if (!recipeRef.current) return;
 
-    const canvas = await html2canvas(recipeRef.current, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
+    const opt = {
+      margin: 10,
+      filename: `${data?.NomeDaReceita || "receita"}.pdf`,
+      image: { type: "jpeg" as const, quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" as const },
+    };
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = (canvas.height * pageWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
-    heightLeft -= pdf.internal.pageSize.getHeight();
-
-    // Caso a receita seja longa, adiciona novas páginas
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
-      heightLeft -= pdf.internal.pageSize.getHeight();
-    }
-
-    pdf.save(`${data?.NomeDaReceita || "receita"}.pdf`);
+    await html2pdf().from(recipeRef.current).set(opt).save();
   }
 
   return (
-    <div className="flex-1  flex md:flex-row flex-col">
+    <div className="flex-1 flex md:flex-row flex-col">
       {/* SEÇÃO ESQUERDA */}
       <div className="md:w-[46%] relative p-7">
         <p className="text-xl shadow-slate-9 font-semibold">
@@ -141,8 +121,8 @@ export function MakeRecipe() {
               <div className="border flex-1 p-2 w-full overflow-y-scroll">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {foodListMock
-                    .filter((data) =>
-                      data
+                    .filter((food) =>
+                      food
                         .toLowerCase()
                         .normalize("NFD")
                         .replace(/[\u0300-\u036f]/g, "")
@@ -276,7 +256,6 @@ export function MakeRecipe() {
         </div>
       </div>
 
-      {/* SEÇÃO DIREITA (RECEITA GERADA) */}
       {/* SEÇÃO DIREITA (RECEITA GERADA) */}
       <div className="flex-1 p-3 pb-[100px] bg-[#49DE80]/30 overflow-y-auto h-screen">
         <div
