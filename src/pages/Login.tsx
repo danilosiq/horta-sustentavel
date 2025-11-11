@@ -22,7 +22,7 @@ import { PostSignIn } from "@/service/PostSignIn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 // --- FUNÇÕES DE MASCARAMENTO MANUAL PARA GARANTIR COMPILAÇÃO E MÁSCARA ---
@@ -158,7 +158,7 @@ const Login = () => {
           title: "Sucesso!",
           description: "Login efetuado com sucesso! 🎉",
         });
-        navigate('/')
+        navigate("/");
       } else {
         toast({
           title: "Erro inesperado",
@@ -229,7 +229,7 @@ const Login = () => {
         <Button
           variant="ghost"
           size="sm"
-          onClick={()=>navigate('/')}
+          onClick={() => navigate("/")}
           className="mb-6 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -295,6 +295,9 @@ const Login = () => {
                         required
                       />
                     </div>
+                    <Link to={"/forgot-password"} className="text-sm mt-1 hover:underline text-green-600">
+                      <p>Esqueci minha senha</p>
+                    </Link>
                   </div>
 
                   <Button

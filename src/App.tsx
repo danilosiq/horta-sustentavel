@@ -14,6 +14,7 @@ import Producer from "./pages/Producer";
 import Recipes from "./pages/Recipes";
 
 import { ProtectedBaseRoute } from "./components/Protected-route";
+import { ForgotPassword } from "./pages/forgotPassword";
 import { GreenCalendarIntro } from "./pages/GreenCalendarIntro";
 import { GreenCalendarPrompt } from "./pages/GreenCalendarPrompt";
 import { GuideIntro } from "./pages/GuideIntro";
@@ -52,7 +53,7 @@ const AppContent = () => {
         />
 
         <Route path="/ongs" element={<OngsScreen />} />
-
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/:id" element={<ViewUser />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/make-recipe" element={<MakeRecipe />} />
