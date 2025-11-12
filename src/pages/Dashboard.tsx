@@ -1,336 +1,166 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { 
-  Plus, 
-  Leaf, 
-  Calendar, 
-  Package, 
-  TrendingUp,
-  BookOpen,
-  Camera,
-  Edit,
-  Trash2
-} from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-interface Vegetable {
-  id: number;
-  name: string;
-  quantity: number;
-  unit: string;
-  planted: string;
-  status: "growing" | "ready" | "harvested";
-  description?: string;
-  image?: string;
-}
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, Pie, PieChart, XAxis, YAxis } from "recharts";
 
 const Dashboard = () => {
-  const [vegetables, setVegetables] = useState<Vegetable[]>([
-    {
-      id: 1,
-      name: "Alface",
-      quantity: 20,
-      unit: "plantas",
-      planted: "2024-01-15",
-      status: "ready",
-      description: "Alface crespa orgânica"
+  const chartData = [
+    { month: "Jan", entrada: 10, saida: 2 },
+    { month: "Fev", entrada: 15, saida: 10 },
+    { month: "Mar", entrada: 7, saida: 12 },
+    { month: "Abr", entrada: 24, saida: 19 },
+    { month: "Mai", entrada: 10, saida: 13 },
+    { month: "Jun", entrada: 24, saida: 14 },
+    { month: "Jul", entrada: 14, saida: 4 },
+    { month: "Ago", entrada: 12, saida: 34 },
+    { month: "Set", entrada: 6, saida: 14 },
+    { month: "Out", entrada: 7, saida: 9 },
+    { month: "Nov", entrada: 19, saida: 12 },
+    { month: "Dez", entrada: 8, saida: 4 },
+  ];
+
+  // Gráfico de pizza
+  const chartDataPie = [
+    { name: "Entradas", value: 100, fill: "#4ade80" },
+    { name: "Saídas", value: 30, fill: "#f87171" },
+  ];
+
+  const chartConfig = {
+    entrada: { label: "Entradas", color: "#4ade80" },
+    saida: { label: "Saídas", color: "#f87171" },
+  };
+
+  // Mock para hortaliças com quantidades cultivadas
+  const listMock = [
+    { name: "Tomate", quantidade: 120 },
+    { name: "Alface", quantidade: 95 },
+    { name: "Cenoura", quantidade: 80 },
+    { name: "Rúcula", quantidade: 70 },
+    { name: "Espinafre", quantidade: 65 },
+    { name: "Coentro", quantidade: 55 },
+    { name: "Salsa", quantidade: 45 },
+    { name: "Cebolinha", quantidade: 40 },
+    { name: "Pepino", quantidade: 38 },
+    { name: "Pimentão", quantidade: 35 },
+  ];
+
+  const chartConfigHortalicas: ChartConfig = {
+    quantidade: {
+      label: "Quantidade",
+      color: "#22c55e",
     },
-    {
-      id: 2,
-      name: "Tomate",
-      quantity: 15,
-      unit: "plantas",
-      planted: "2024-01-10",
-      status: "growing",
-      description: "Tomate cereja"
-    },
-    {
-      id: 3,
-      name: "Cebolinha",
-      quantity: 30,
-      unit: "mudas",
-      planted: "2024-01-20",
-      status: "ready",
-      description: "Cebolinha verde"
-    }
-  ]);
-
-  const [newVegetable, setNewVegetable] = useState({
-    name: "",
-    quantity: "",
-    unit: "plantas",
-    description: ""
-  });
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { toast } = useToast();
-
-  const handleAddVegetable = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newVegetable.name || !newVegetable.quantity) {
-      toast({
-        title: "Erro",
-        description: "Por favor, preencha todos os campos obrigatórios.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const vegetable: Vegetable = {
-      id: vegetables.length + 1,
-      name: newVegetable.name,
-      quantity: parseInt(newVegetable.quantity),
-      unit: newVegetable.unit,
-      planted: new Date().toISOString().split('T')[0],
-      status: "growing",
-      description: newVegetable.description
-    };
-
-    setVegetables([...vegetables, vegetable]);
-    setNewVegetable({ name: "", quantity: "", unit: "plantas", description: "" });
-    setIsDialogOpen(false);
-    
-    toast({
-      title: "Hortaliça adicionada!",
-      description: `${vegetable.name} foi cadastrada com sucesso.`,
-    });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "ready": return "bg-primary text-primary-foreground";
-      case "growing": return "bg-accent text-accent-foreground";
-      case "harvested": return "bg-muted text-muted-foreground";
-      default: return "bg-muted text-muted-foreground";
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "ready": return "Pronto";
-      case "growing": return "Crescendo";
-      case "harvested": return "Colhido";
-      default: return "Status";
-    }
-  };
-
-  const stats = {
-    total: vegetables.length,
-    ready: vegetables.filter(v => v.status === "ready").length,
-    growing: vegetables.filter(v => v.status === "growing").length,
-    harvested: vegetables.filter(v => v.status === "harvested").length
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Painel do Usuário</h1>
-            <p className="text-muted-foreground">Gerencie suas hortaliças e acompanhe o crescimento</p>
-          </div>
-          
-          <div className="flex gap-3">
-            <Button variant="outline" asChild>
-              <a href="/recipes">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Ver Receitas
-              </a>
-            </Button>
-            
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Hortaliça
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Cadastrar Nova Hortaliça</DialogTitle>
-                  <DialogDescription>
-                    Adicione uma nova hortaliça à sua horta
-                  </DialogDescription>
-                </DialogHeader>
-                
-                <form onSubmit={handleAddVegetable} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nome da hortaliça *</Label>
-                    <Input
-                      id="name"
-                      placeholder="Ex: Alface, Tomate, Cenoura..."
-                      value={newVegetable.name}
-                      onChange={(e) => setNewVegetable({ ...newVegetable, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="quantity">Quantidade *</Label>
-                      <Input
-                        id="quantity"
-                        type="number"
-                        placeholder="0"
-                        value={newVegetable.quantity}
-                        onChange={(e) => setNewVegetable({ ...newVegetable, quantity: e.target.value })}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="unit">Unidade</Label>
-                      <select
-                        id="unit"
-                        className="w-full p-2 border border-input rounded-md bg-background"
-                        value={newVegetable.unit}
-                        onChange={(e) => setNewVegetable({ ...newVegetable, unit: e.target.value })}
-                      >
-                        <option value="plantas">Plantas</option>
-                        <option value="mudas">Mudas</option>
-                        <option value="kg">Kg</option>
-                        <option value="unidades">Unidades</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Descrição</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Descrição opcional da hortaliça..."
-                      value={newVegetable.description}
-                      onChange={(e) => setNewVegetable({ ...newVegetable, description: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end gap-3">
-                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                      Cancelar
-                    </Button>
-                    <Button type="submit">
-                      Cadastrar
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
+    <div className="min-h-screen bg-green-50 p-10 flex flex-col gap-10">
+      <div className="shadow-xl bg-white p-6 max-w-[600px] mx-auto rounded-md text-center">
+        <p className="text-lg font-bold">Bem-vindo ao Dashboard!</p>
+        <p className="text-sm text-slate-500">
+          Aqui você pode visualizar seus resultados em gráficos.
+        </p>
+        <p className="text-red-600 font-bold">ALERTA: ISSO É APENAS UM PROTÓTIPO, COMO IDEIA FUTURA DE INTEGRAÇÃO</p>
+      </div>
+
+      <div className="flex max-sm:flex-col gap-5 ">
+        {/* 📊 Gráfico de barras principal */}
+        <div className="shadow-xl w-full bg-white p-6 max-w-[600px] mx-auto rounded-md">
+          <p className="text-center text-lg font-semibold">
+            Entradas e saídas ao longo do ano
+          </p>
+          <ChartContainer config={chartConfig}>
+            <BarChart accessibilityLayer data={chartData}>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value) => value.slice(0, 3)}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartLegend content={<ChartLegendContent />} />
+              <Bar dataKey="entrada" fill="#4ade80" radius={4} />
+              <Bar dataKey="saida" fill="#f87171" radius={4} />
+            </BarChart>
+          </ChartContainer>
+        </div>
+
+        {/* 🥧 Gráfico de pizza */}
+        <div className="shadow-xl bg-white p-6 w-full max-w-[600px] mx-auto rounded-md">
+          <p className="text-center text-lg font-semibold">
+            Entradas e saídas no ano
+          </p>
+
+          <ChartContainer
+            config={chartConfig}
+            className="mx-auto aspect-square max-h-[250px]"
+          >
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Pie
+                data={chartDataPie}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={50}
+                outerRadius={80}
+                label
+              />
+            </PieChart>
+          </ChartContainer>
+          <div className="mt-4 flex gap-3 flex-row items-center pt-4 border-t border-green-500">
+            <p>Info:</p>
+            <div className="flex items-center gap-1">
+              <div className="bg-green-500 w-3 h-3 rounded-full" />
+              <p>Entradas</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="bg-red-500 w-3 h-3 rounded-full" />
+              <p>Saídas</p>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2">
-                <Package className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-muted-foreground">Total</span>
-              </div>
-              <div className="text-2xl font-bold">{stats.total}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-accent-foreground" />
-                <span className="text-sm font-medium text-muted-foreground">Crescendo</span>
-              </div>
-              <div className="text-2xl font-bold text-accent-foreground">{stats.growing}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2">
-                <Leaf className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-muted-foreground">Prontos</span>
-              </div>
-              <div className="text-2xl font-bold text-primary">{stats.ready}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm font-medium text-muted-foreground">Colhidos</span>
-              </div>
-              <div className="text-2xl font-bold">{stats.harvested}</div>
-            </CardContent>
-          </Card>
+      {/* 📈 Hortaliças com gráfico lateral */}
+      <div className="flex max-sm:flex-col items-center gap-3">
+        <div className="shadow-xl rounded-md bg-green-600 text-center text-white p-10">
+          <p className="text-sm">Você gerou no total</p>
+          <p className="text-2xl font-bold">14</p>
+          <p>Receitas!</p>
         </div>
 
-        {/* Vegetables Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {vegetables.map((vegetable) => (
-            <Card key={vegetable.id} className="hover:shadow-soft transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Leaf className="w-5 h-5 text-primary" />
-                      {vegetable.name}
-                    </CardTitle>
-                    <CardDescription className="mt-1">
-                      {vegetable.quantity} {vegetable.unit}
-                    </CardDescription>
-                  </div>
-                  <Badge className={getStatusColor(vegetable.status)}>
-                    {getStatusText(vegetable.status)}
-                  </Badge>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-3">
-                {vegetable.description && (
-                  <p className="text-sm text-muted-foreground">
-                    {vegetable.description}
-                  </p>
-                )}
-                
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
-                  Plantado em {new Date(vegetable.planted).toLocaleDateString('pt-BR')}
-                </div>
-                
-                <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="w-4 h-4 mr-1" />
-                    Editar
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Camera className="w-4 h-4 mr-1" />
-                    Foto
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <div className="shadow-xl bg-white p-6 w-full rounded-md">
+          <p className="text-lg font-semibold text-center">
+            Top 10 Hortaliças que você mais cultivou!
+          </p>
 
-        {vegetables.length === 0 && (
-          <Card className="text-center py-16">
-            <CardContent>
-              <Leaf className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <CardTitle className="text-xl mb-2">Nenhuma hortaliça cadastrada</CardTitle>
-              <CardDescription className="mb-4">
-                Comece adicionando suas primeiras hortaliças para acompanhar o crescimento
-              </CardDescription>
-              <Button onClick={() => setIsDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar Primeira Hortaliça
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+          <ChartContainer config={chartConfigHortalicas} className="min-h-[300px] w-full">
+            <BarChart
+              layout="vertical"
+              data={listMock}
+              margin={{ left: 80, right: 20, top: 20, bottom: 20 }}
+            >
+              <CartesianGrid horizontal={false} />
+              <XAxis type="number" />
+              <YAxis
+                dataKey="name"
+                type="category"
+                width={80}
+                tick={{ fill: "#374151", fontSize: 12 }}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="quantidade" fill="#22c55e" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ChartContainer>
+        </div>
       </div>
     </div>
   );

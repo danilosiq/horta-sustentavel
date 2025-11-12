@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Horta } from "@/service/getHorta";
 import { Eye, LogOut, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export interface CardHortaPropr {
   data: Horta;
@@ -67,12 +68,18 @@ export function Cardhorta({ data, JustView = false }: CardHortaPropr) {
       </div>
 
       {!JustView && (
+        <div className="flex gap-3 mx-auto">
         <div
           onClick={logout}
-          className="bg-red-500 w-[150px] mx-auto flex flex-row gap-2 cursor-pointer hover:bg-red-500/50 items-center justify-center rounded-md p-2 text-white"
+          className="bg-red-500 w-[150px]  flex flex-row gap-2 cursor-pointer hover:bg-red-500/50 items-center justify-center rounded-md p-2 text-white"
         >
           <p>Sair</p>
           <LogOut />
+        </div>
+
+        <Link className="border border-green-500 p-3 rounded-sm text-green-500" to={'/dashboard'}>
+        Dashboard
+        </Link>
         </div>
       )}
     </div>
