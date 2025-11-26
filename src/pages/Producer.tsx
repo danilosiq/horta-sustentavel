@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { GetEstoque } from "@/service/getEstoque";
@@ -215,6 +215,7 @@ const Producer = () => {
           <Cardhorta data={dataHorta.horta} />
 
           <Dialog>
+            <DialogTitle></DialogTitle>
             <DialogTrigger asChild>
               <Button
                 variant="outline"
@@ -293,6 +294,8 @@ const Producer = () => {
 
         {dataHorta?.horta && (
           <Dialog>
+                        <DialogTitle></DialogTitle>
+
             <DialogTrigger className="w-full flex justify-center">
               <div className="">
                 <span className="flex flex-row p-2 border-green-600 text-green-600 border items-center rounded-md">
