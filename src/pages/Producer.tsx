@@ -305,12 +305,108 @@ const Producer = () => {
               </div>
             </DialogTrigger>
             <DialogContent>
-              <form
-                onSubmit={handleSubmit(handleAddMov)}
-                className="w-full flex flex-col gap-4"
-              >
-                {/* ... form igual ao seu ... */}
-              </form>
+              <form onSubmit={handleSubmit(handleAddMov)} className="w-full">
+                  <div className=" gap-4 flex flex-col border rounded-sm p-3">
+                    <p className="text-xl font-semibold">Adicionar Hortaliça</p>
+
+                    <label className="flex flex-col">
+                      Nome
+                      <input
+                        {...register("name")}
+                        type="text"
+                        placeholder="Batata"
+                        className="p-1 border rounded-sm w-full"
+                      />
+                      {errors.name && (
+                        <p className="text-red-500">{errors.name.message}</p>
+                      )}
+                    </label>
+
+                    <label className="flex flex-col">
+                      Descrição da hortaliça
+                      <input
+                        {...register("desc")}
+                        type="text"
+                        placeholder="Cor vermelha"
+                        className="p-1 border rounded-sm w-full"
+                      />
+                    </label>
+
+                    <label className="flex flex-col">
+                      Tipo da movimentação
+                      <select
+                        {...register("typeMov")}
+                        className="border rounded-md p-2 w-full focus:outline-green-600"
+                      >
+                        <option value="entrada">Entrada</option>
+                      </select>
+                    </label>
+
+                    <label className="flex flex-col">
+                      Data do plantio
+                      <input
+                        {...register("dt_plantio")}
+                        type="date"
+                        className="p-1 border rounded-sm w-full"
+                      />
+                    </label>
+
+                    <label className="flex flex-col">
+                      Data da última colheita
+                      <input
+                        {...register("dt_colheita")}
+                        type="date"
+                        className="p-1 border rounded-sm w-full"
+                      />
+                    </label>
+
+                    <label className="flex flex-col">
+                      Valor
+                      <div className="flex gap-2">
+                        <input
+                          {...register("valor")}
+                          type="number"
+                          placeholder="0"
+                          className="p-1 border rounded-sm w-full"
+                        />
+                        <select
+                          {...register("medida")}
+                          className="border rounded-md p-2 w-full focus:outline-green-600"
+                        >
+                          <option value="kg">Kg</option>
+                          <option value="unidade">Unidade</option>
+                        </select>
+                      </div>
+                    </label>
+
+                    <label className="flex flex-col">
+                      Motivo
+                      <select
+                        {...register("motivo")}
+                        className="border rounded-md p-2 w-full focus:outline-green-600"
+                      >
+                        {typeMov === "saida" ? (
+                          <>
+                            <option value="venda">Venda</option>
+                            <option value="consumo">Consumo</option>
+                            <option value="perda/disperdicio">
+                              Perda/Disperdício
+                            </option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="colheita">Colheita</option>
+                            <option value="compra">Compra</option>
+                          </>
+                        )}
+                      </select>
+                    </label>
+
+                    <Button type="submit" className="w-full">
+                      Adicionar
+                    </Button>
+                  </div>
+                </form>
             </DialogContent>
           </Dialog>
         )}
